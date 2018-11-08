@@ -10,14 +10,10 @@ Description:
 
 ******************************************************************************/
 
-/* jshint evil:true */
+/* jshint strict:true esversion:5 indent:false */
 
 function YAMB (id, controller) {
   YAMB.super_.call(this, id, controller)
-
-  this.callbackDevice = undefined
-  this.callbackDeviceCreated = undefined
-  this.callbackTagsChanged = undefined
 
   _.extend(this, {
     topics: {}
@@ -46,7 +42,7 @@ YAMB.prototype.init = function (config) {
   self.callbackTagsChanged = _.bind(self.handleTags, self)
   self.controller.devices.on('change:tags', self.callbackTagsChanged)
 
-    // API
+  // API
   self.defineAPIHandlers()
   self.externalAPIAllow()
   global['YAMB'] = this.YAMBAPI
@@ -61,10 +57,6 @@ YAMB.prototype.stop = function () {
   self.controller.devices.off('change:tags', self.callbackTagsChanged)
 
   self.handleCancel()
-
-  self.callbackDevice = undefined
-  self.callbackDeviceCreated = undefined
-  self.callbackTagsChanged = undefined
 
   YAMB.super_.prototype.stop.call(this)
 }
@@ -82,16 +74,26 @@ YAMB.prototype.handleTags = function (device) {
 YAMB.prototype.handleDeviceCreated = function (device) {
   var self = this
 
-  console.log('[YAMB] device created', device.get('metrics:title'), 'with tags ', device.get('tags'))
   if (_.intersection(device.get('tags'), ['mqtt']).length > 0) {
     self.addDevice(device)
+    console.log(
+      '[YAMB] device added',
+      device.get('metrics:title'),
+      'with tags ',
+      device.get('tags')
+    )
   }
 }
 
 YAMB.prototype.handleDevice = function (device) {
   var self = this
 
-  console.log('[YAMB] change', device.get('metrics:title'), 'to', device.get('metrics:level'))
+  console.log(
+    '[YAMB] change',
+    device.get('metrics:title'),
+    'to',
+    device.get('metrics:level')
+  )
 }
 
 YAMB.prototype.handleCancel = function () {
@@ -106,15 +108,20 @@ YAMB.prototype.handleCancel = function () {
 YAMB.prototype.addDevice = function (device) {
   var self = this
 
-  var devTitle = device.get('metrics:title'),
-    devID = device.get('id'),
-    newTopic = {}
+  var devTitle = device.get('metrics:title')
+  var devID = device.get('id')
+  var newTopic = {}
 
   newTopic[devID] = { topic: devTitle }
 
   _.extend(self.topics, newTopic)
 
-  console.log('[YAMB] topic added for ', devTitle, 'object is', JSON.stringify(newTopic))
+  console.log(
+    '[YAMB] topic added for ',
+    devTitle,
+    'object is',
+    JSON.stringify(newTopic)
+  )
 }
 
 YAMB.prototype.reCreateTopics = function () {
@@ -175,7 +182,7 @@ YAMB.prototype.defineAPIHandlers = function () {
 
     body.oldCount = _.size(self.topics)
 
-        // Recreate topics list
+    // Recreate topics list
     self.reCreateTopics()
 
     body.newCount = _.size(self.topics)
@@ -185,7 +192,7 @@ YAMB.prototype.defineAPIHandlers = function () {
   }
 }
 
-// Helper mothods
+// Helper methods
 
 // YAMB.prototype.processAction = function (index, event) {
 //   var self = this

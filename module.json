@@ -1,0 +1,22 @@
+{
+  "author": "Alex Parkhomenko",
+  "category": "developers_stuff",
+  "defaults": {
+    "description": "Simple MQTT bridge for ZWay",
+    "title": "YAMB"
+  },
+  "dependencies": [],
+  "homepage": "https://github.com/maros/Zway-EventWatcher/",
+  "icon": "icon.png",
+  "maturity": "alfa",
+  "moduleName": "YAMB",
+  "repository": {
+    "source": "https://github.com/maros/Zway-EventWatcher",
+    "type": "git"
+  },
+  "options": {
+    "logPrefix": "YAMB"
+  },
+  "singleton": false,
+  "version": "0.03"
+}

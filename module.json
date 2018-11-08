@@ -15,8 +15,11 @@
     "type": "git"
   },
   "options": {
-    "logPrefix": "YAMB"
+    "fields": {}
   },
-  "singleton": false,
+  "schema": {
+    "properties": {}
+  },
+  "singleton": true,
   "version": "0.03"
 }

@@ -1,0 +1,527 @@
+{
+    "DummyDevice_5": {
+        "name": "Dummy Device",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-1-S": {
+        "name": "Mote 1",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-2-S": {
+        "name": "Mote 1 Long",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-3-S": {
+        "name": "Mote 2",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-4-S": {
+        "name": "Mote 2 Long",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-5-S": {
+        "name": "Mote 3",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-6-S": {
+        "name": "Mote 3 Long",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-7-S": {
+        "name": "Mote 4",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_15-0-0-8-S": {
+        "name": "Mote 4 Long",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_27-0-0-4-S": {
+        "name": "Aeotec 1 BR Button",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_27-0-0-3-S": {
+        "name": "Aeotec 1 BL Button",
+        "type": "toggleButton",
+        "mode": "ro",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_27-0-0-2-S": {
+        "name": "Aeotec 1 TL Button",
+        "type": "toggleButton",
+        "mode": "rw",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_27-0-0-1-S": {
+        "name": "Aeotec 1 TR Button",
+        "type": "toggleButton",
+        "mode": "rw",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_Remote_34-3-3-B": {
+        "name": "Bedroom All",
+        "type": "switchControl",
+        "mode": "rw",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_2-0-49-1": {
+        "name": "Bathroom Thermostat Temp",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 33,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_2-0-50-0": {
+        "name": "ThermoFloor Meter",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 2005.0999296,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_2-0-64": {
+        "name": "Bathroom Thermostat Operation",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_3-0-48-10": {
+        "name": "Bathroom Win Open",
+        "type": "sensorBinary",
+        "mode": "ro",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_3-0-49-1": {
+        "name": "Bathroom Win Temp",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 18.9,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_4-2-49-1": {
+        "name": "Bathroom Temp",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 29.26,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_10-0-37": {
+        "name": "Stairway (10.0)",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_10-1-37": {
+        "name": "Stairway Light",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_11-2-37": {
+        "name": "Office Switch 2",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_11-1-37": {
+        "name": "Office Switch 1",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_18-1-37": {
+        "name": "Hall Theater Left",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_18-2-37": {
+        "name": "Hall Theater Right",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_20-2-37": {
+        "name": "Dining Room",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_20-1-37": {
+        "name": "Dining Table",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_21-1-37": {
+        "name": "Bedroom Light",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_21-2-37": {
+        "name": "Bedroom TV Light",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_22-1-37": {
+        "name": "Bathroom Light",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_22-2-37": {
+        "name": "Bathroom Mirror",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_24-1-37": {
+        "name": "Hall Wall Lanterns",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_24-2-37": {
+        "name": "Hall TV",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_25-1-37": {
+        "name": "Office WC Light",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_25-2-37": {
+        "name": "Office WC Air",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_27-0-91-DS": {
+        "name": "Aeotec Control 01",
+        "type": "sensorDiscrete",
+        "mode": "rw",
+        "lastLevel": "20",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_28-0-48-12": {
+        "name": "Laundry PIR",
+        "type": "sensorBinary",
+        "mode": "ro",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_28-0-49-3": {
+        "name": "Laundry Luminiscence",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 0,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_29-1-37": {
+        "name": "Hall Back",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_31-1-37": {
+        "name": "Kitchen Switch",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_32-0-37": {
+        "name": "DEFARO Switch (32)",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_32-1-37": {
+        "name": "Bedroom Closet",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_33-1-37": {
+        "name": "Hall Left",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_34-1-37": {
+        "name": "Bedroom Aisle",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_35-1-37": {
+        "name": "Laundry Light",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_36-1-37": {
+        "name": "Bedroom 2 Left",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_36-2-37": {
+        "name": "Bedroom 2 Right",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_37-1-37": {
+        "name": "Bedroom 2 WC Light",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_37-2-37": {
+        "name": "Bedroom 2 WC Air",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_40-0-48-12": {
+        "name": "Kitchen PIR",
+        "type": "sensorBinary",
+        "mode": "ro",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_41-0-49-1": {
+        "name": "Office Temperature",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 24.69,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_41-0-67-1": {
+        "name": "Office Panel Heat",
+        "type": "thermostat",
+        "mode": "rw",
+        "lastLevel": 24,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_41-0-91-DS": {
+        "name": "Office Panel Control",
+        "type": "sensorDiscrete",
+        "mode": "rw",
+        "lastLevel": "",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_43-0-49-1": {
+        "name": "Bedroom Temp",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 23.9,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_43-0-67-1": {
+        "name": "Bedroom Panel Heat",
+        "type": "thermostat",
+        "mode": "rw",
+        "lastLevel": 24,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_45-0-37": {
+        "name": "Office Wall Heater Switch",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_46-0-38": {
+        "name": "Bedroom 46 Valve",
+        "type": "switchMultilevel",
+        "mode": "rw",
+        "lastLevel": 63,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_46-0-49-1": {
+        "name": "Bedroom 46 Temperature",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 36.2,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_46-0-64": {
+        "name": "Bedroom 46 Operation",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_46-0-67-1": {
+        "name": "Bedroom Spirit 46 Heat",
+        "type": "thermostat",
+        "mode": "rw",
+        "lastLevel": 24,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_47-0-38": {
+        "name": "Bedroom 47 Valve",
+        "type": "switchMultilevel",
+        "mode": "rw",
+        "lastLevel": 63,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_47-0-49-1": {
+        "name": "Bedroom 47 Temperature",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 36.52,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_47-0-64": {
+        "name": "Bedroom 47 Operation",
+        "type": "switchBinary",
+        "mode": "rw",
+        "lastLevel": "on",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_47-0-67-1": {
+        "name": "Bedroom Spirit 47 Heat",
+        "type": "thermostat",
+        "mode": "rw",
+        "lastLevel": 24,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_48-0-48-1": {
+        "name": "Aeotec PIR",
+        "type": "sensorBinary",
+        "mode": "ro",
+        "lastLevel": "off",
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_48-0-49-1": {
+        "name": "Hall Temperature",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 24.1,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_48-0-49-3": {
+        "name": "Hall Luminiscence",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 0,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_48-0-49-5": {
+        "name": "Hall Humidity",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 28,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_48-0-49-27": {
+        "name": "Hall Ultraviolet",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 0,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_49-0-38": {
+        "name": "Bedroom 49 Valve",
+        "type": "switchMultilevel",
+        "mode": "rw",
+        "lastLevel": 99,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_49-0-49-1": {
+        "name": "Bedroom 49 Temperature",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 35.89,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_49-0-67-1": {
+        "name": "Bedroom Spirit 49 Heat",
+        "type": "thermostat",
+        "mode": "rw",
+        "lastLevel": 24,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_50-0-49-1": {
+        "name": "DAT WC Temp",
+        "type": "sensorMultilevel",
+        "mode": "ro",
+        "lastLevel": 23.6200016,
+        "lastStatus": 0
+    },
+    "ZWayVDev_zway_50-0-64": {
+        "name": "DAT WC Operation",
+        "type": "switchBinary",
+        "mode": "ro",
+        "lastLevel": "on",
+        "lastStatus": 0
+    }
+}

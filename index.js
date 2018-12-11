@@ -1,27 +1,15 @@
-/** * YAMB Z-Way HA module *******************************************
+/* global _, inherits, AutomationModule, _module:true, ws, mqttee */
+/* exported _module */
 
-Version: 1.04
-(c) Maroš Kollár, 2015
------------------------------------------------------------------------------
-Author: Maroš Kollár <maros@k-1.com>
-Description:
-    This module listens to a selected event, and performs certain tasks when
-    this event fires.
-
-******************************************************************************/
-
-/* jshint strict:true esversion:5 indent:false */
+// ----------------------------------------------------------------------------
+// --- Class definition, inheritance and setup
+// ----------------------------------------------------------------------------
 
 function YAMB (id, controller) {
   YAMB.super_.call(this, id, controller)
-
-  _.extend(this, {
-    topics: {}
-  })
 }
 
 inherits(YAMB, AutomationModule)
-
 _module = YAMB
 
 // ----------------------------------------------------------------------------
@@ -31,250 +19,262 @@ _module = YAMB
 YAMB.prototype.init = function (config) {
   YAMB.super_.prototype.init.call(this, config)
 
-  var self = this
+  // Options
+  // TODO: Make configurable later
+  this.topicPrefix = 'zwave'
 
-  // self.callbackDevice = _.bind(self.handleDevice, self)
-  // self.controller.devices.on('change:metrics:level', self.callbackDevice)
+  // Structure
+  this.topics = {}
+  this.lastStructureChangeTime = 0
 
-  self.callbackDeviceCreated = _.bind(self.handleDeviceCreated, self)
-  self.controller.devices.on('created', self.callbackDeviceCreated)
+  // Bind 'this' in handlers
+  this.onDeviceInsert = _.bind(this.doDeviceInsert, this)
+  this.controller.devices.on('created', this.onDeviceInsert)
+  this.controller.devices.on('change:tags', this.onDeviceInsert)
 
-  self.callbackTagsChanged = _.bind(self.handleTags, self)
-  self.controller.devices.on('change:tags', self.callbackTagsChanged)
+  this.onDeviceRemove = _.bind(this.doDeviceRemove, this)
+  this.controller.devices.on('removed', this.onDeviceRemove)
 
-  // API
-  self.defineAPIHandlers()
-  self.externalAPIAllow()
-  global['YAMB'] = this.YAMBAPI
+  // Cron poll
+  this.onCheckForNewDevices = _.bind(this.doCheckForNewDevices, this)
+  this.controller.on('yamb.poll', this.onCheckForNewDevices)
+  this.controller.emit('cron.addTask', 'yamb.poll', {
+    minute: [0, 59, 5], // Every 5 minutes
+    hour: null,
+    weekDay: null,
+    day: null,
+    month: null
+  })
+
+  // This to be called to device metrics updates
+  this.onDeviceChanged = _.bind(this.doDeviceChanged, this)
+
+  // Allow external API
+  this.externalAPIAllow()
+  global['yambi'] = this.yambi
+  this.yambi['status'] = _.bind(this.doYambiStatus, this)
+  this.yambi['refresh'] = _.bind(this.doYambiRefresh, this)
 }
 
 YAMB.prototype.stop = function () {
-  var self = this
-
-  // self.controller.devices.off('change:metrics:level', self.callbackDevice)
-
-  self.controller.devices.off('created', self.callbackDeviceCreated)
-  self.controller.devices.off('change:tags', self.callbackTagsChanged)
-
-  self.handleCancel()
-
   YAMB.super_.prototype.stop.call(this)
+  var self = this
+
+  // Revoke external API
+  self.externalAPIRevoke()
+  delete global['yambapi']
+
+  // Remove device level event listeners (devID is the key in the topics object)
+  _.each(self.topics, function (topic, devID) {
+    self.controller.devices.off(devID, 'change:metrics:level', self.onDeviceChanged)
+  })
+
+  // Cancel event listeners
+  self.controller.devices.off('created', self.onDeviceInsert)
+  self.controller.devices.off('change:tags', self.onDeviceInsert)
+  self.controller.devices.off('removed', self.onDeviceRemove)
+
+  self.controller.emit('cron.removeTask', 'yamb.poll')
+  self.controller.off('yamb.poll', self.onCheckForNewDevices)
 }
 
 // ----------------------------------------------------------------------------
-// --- Event methods
+// --- Event handlers
 // ----------------------------------------------------------------------------
 
-YAMB.prototype.handleTags = function (device) {
-  var self = this
+YAMB.prototype.doDeviceInsert = function (device) {
+  console.log('[YAMB] Checking device', device.get('metrics:title'))
+  var devID = device.get('id')
 
-  console.log('[YAMB] tags updated for ', device.get('metrics:title'))
-}
+  var topicMode = this.getTopicMode(device.get('tags'), device.get('deviceType'))
+  if (!topicMode) {
+    if (devID in this.topics) {
+      delete this.topics[devID]
+      console.log('[YAMB] Removed device from topics')
+      this.lastStructureChangeTime = Math.floor(new Date().getTime() / 1000)
+    }
+  } else {
+    console.log('[YAMB] Adding device', device.get('metrics:title'), 'with mode', topicMode)
 
-YAMB.prototype.handleDeviceCreated = function (device) {
-  var self = this
+    // Base properties
+    var deviceName = device.get('metrics:title')
+    var deviceType = device.get('deviceType')
+    var deviceLastLevel = device.get('metrics:level')
 
-  if (_.intersection(device.get('tags'), ['mqtt']).length > 0) {
-    self.addDevice(device)
-    console.log(
-      '[YAMB] device added',
-      device.get('metrics:title'),
-      'with tags ',
-      device.get('tags')
-    )
+    // Form mqtt topic name
+    var topicBody = this.getTopicFromTitle(deviceName)
+
+    // Topics to listen
+    // eslint-disable-next-line no-undef-init
+    var subscribeTopic = undefined
+    if (topicMode === 'in' || topicMode === 'rw') {
+      subscribeTopic = this.topicPrefix + '/' + deviceType + '/' + topicBody + '/set'
+    }
+
+    // Topics to publish
+    // eslint-disable-next-line no-undef-init
+    var publishTopic = undefined
+    if (topicMode === 'ro' || topicMode === 'rw') {
+      publishTopic = this.topicPrefix + '/' + deviceType + '/' + topicBody
+    }
+
+    var newTopic = {
+      name: deviceName,
+      type: deviceType,
+      mode: topicMode,
+      lastLevel: deviceLastLevel,
+      subTopic: subscribeTopic,
+      pubTopic: publishTopic
+    }
+
+    if (devID in this.topics) {
+      _.extend(this.topics[devID], newTopic)
+    } else {
+      this.topics[devID] = newTopic
+      this.topics[devID].lastStatus = 0
+      this.controller.devices.on(devID, 'change:metrics:level', this.onDeviceChanged)
+    }
+    this.lastStructureChangeTime = Math.floor(new Date().getTime() / 1000)
   }
 }
 
-YAMB.prototype.handleDevice = function (device) {
+YAMB.prototype.doDeviceRemove = function (device) {
   var self = this
-
-  console.log(
-    '[YAMB] change',
-    device.get('metrics:title'),
-    'to',
-    device.get('metrics:level')
-  )
-}
-
-YAMB.prototype.handleCancel = function () {
-  var self = this
-
-  console.log('[YAMB] Got cancel event')
-}
-
-// --- Data methods
-
-// TODO: Refactor this later
-YAMB.prototype.addDevice = function (device) {
-  var self = this
-
-  var devTitle = device.get('metrics:title')
-  var devID = device.get('id')
-  var newTopic = {}
-
-  newTopic[devID] = { topic: devTitle }
-
-  _.extend(self.topics, newTopic)
-
-  console.log(
-    '[YAMB] topic added for ',
-    devTitle,
-    'object is',
-    JSON.stringify(newTopic)
-  )
-}
-
-YAMB.prototype.reCreateTopics = function () {
-  var self = this
-
-  self.topics = {}
-  console.log('[YAMB] Cleared everything...')
-
-  self.controller.devices.each(function (device) {
-    if (_.intersection(device.get('tags'), ['mqtt']).length > 0) {
-      self.addDevice(device)
+  if (!_.isUndefined(device) && !_.isUndefined(device.get)) {
+    if (device.get('id') in self.topics) {
+      delete self.topics[device.get('id')]
+      this.lastStructureChangeTime = Math.floor(new Date().getTime() / 1000)
+      console.log('[YAMB] Removed device', device.get('id'), 'from topics list')
     }
-  })
+  }
 }
 
-// --- HTTP API
+YAMB.prototype.doCheckForNewDevices = function () {
+  var self = this
+
+  if (self.lastStructureChangeTime >= self.controller.lastStructureChangeTime) {
+    console.log('[YAMB] Cron. Nothing to do. Skipping.')
+  } else {
+    console.log('[YAMB] Refreshing everything')
+    self.controller.devices.each(function (device) {
+      self.onDeviceInsert(device)
+    })
+  }
+}
+
+YAMB.prototype.doDeviceChanged = function (device) {
+  var self = this
+
+  if (!_.isUndefined(device) && !_.isUndefined(device.get)) {
+    var topic = self.topics[device.get('id')]
+    var newLevel = device.get('metrics:level')
+
+    console.log('[YAMB]', topic.name, 'changed from', topic.lastLevel, 'to', newLevel)
+    topic.lastLevel = newLevel
+
+    // Sending mqtt2ee notification
+    if (!_.isUndefined(mqttee) && !_.isUndefined(topic.pubTopic)) {
+      mqttee.emit('mqtt.publish.topic', { topic: topic.pubTopic, value: topic.lastLevel.toString() })
+      console.log('[YAMB] mqtt publish', topic.pubTopic, topic.lastLevel)
+    }
+  } else {
+    console.log('[YAMB] Got event, but device is undefinded')
+  }
+}
+// ----------------------------------------------------------------------------
+// --- Utility methods
+// --- !!! Avoid using 'this' or bind the method to it
+// ----------------------------------------------------------------------------
+YAMB.prototype.getTopicMode = function (deviceTags, deviceType) {
+  function defaultTopicMode (deviceType) {
+    var defMode = 'rw'
+    switch (deviceType) {
+      case 'battery':
+      case 'sensorBinary':
+      case 'sensorMultiline':
+      case 'sensorMultilevel':
+        defMode = 'ro'
+        break
+      case 'doorlock':
+      case 'thermostat':
+      case 'switchBinary':
+      case 'switchMultilevel':
+      case 'toggleButton':
+      case 'switchControl':
+      case 'switchRGB':
+        defMode = 'rw'
+    }
+    return defMode
+  }
+
+  var myTags = ['mqtt', 'mqtt:rw', 'mqtt:ro', 'mqtt:in']
+  var ourTags = _.intersection(myTags, deviceTags)
+
+  // Return undefined if there are no mqtt tags
+  if (!ourTags.length) return null
+
+  var modePrecedence = ['in', 'ro', 'rw']
+  var modeIdx = _.map(ourTags, function (value, index) {
+    var result = defaultTopicMode(deviceType)
+    if (value !== 'mqtt') {
+      result = value.split(':')[1]
+    }
+    return modePrecedence.indexOf(result)
+  }).sort()[0]
+  return modePrecedence[modeIdx]
+}
+
+YAMB.prototype.getTopicFromTitle = function (devName) {
+  return String(devName).replace(/[()]/g, '').toLowerCase().split(/[\s.]/).join('-')
+}
+
+// ----------------------------------------------------------------------------
+// --- Public API
+// ----------------------------------------------------------------------------
 
 YAMB.prototype.externalAPIAllow = function () {
-  ws.allowExternalAccess('YAMB', this.controller.auth.ROLE.USER)
-  ws.allowExternalAccess('YAMB.Status', this.controller.auth.ROLE.USER)
-  ws.allowExternalAccess('YAMB.Refresh', this.controller.auth.ROLE.USER)
+  ws.allowExternalAccess('yambi', this.controller.auth.ROLE.USER)
+  ws.allowExternalAccess('yambi.status', this.controller.auth.ROLE.USER)
+  ws.allowExternalAccess('yambi.refresh', this.controller.auth.ROLE.USER)
 }
 
 YAMB.prototype.externalAPIRevoke = function () {
-  ws.revokeExternalAccess('YAMB')
-  ws.revokeExternalAccess('YAMB.Status')
-  ws.revokeExternalAccess('YAMB.Refresh')
+  ws.revokeExternalAccess('yambi')
+  ws.revokeExternalAccess('yambi.status')
+  ws.revokeExternalAccess('yambi.refresh')
 }
 
-YAMB.prototype.defineAPIHandlers = function () {
-  var self = this
-
-  this.YAMBAPI = function () {
-    return { status: 400, body: 'Bad request ' }
-  }
-
-  this.YAMBAPI.Status = function (url, request) {
-    var body = {
-      updateTime: now,
-      count: 0,
-      topics: {},
-      code: 200
-    }
-
-    body.topics = self.topics
-    body.count = _.size(body.topics)
-    result = self.prepareHTTPResponse(body)
-    return result
-  }
-
-  this.YAMBAPI.Refresh = function (url, request) {
-    var body = {
-      updateTime: now,
-      oldCount: 0,
-      newCount: 0,
-      code: 200
-    }
-
-    body.oldCount = _.size(self.topics)
-
-    // Recreate topics list
-    self.reCreateTopics()
-
-    body.newCount = _.size(self.topics)
-
-    result = self.prepareHTTPResponse(body)
-    return result
-  }
+YAMB.prototype.yambi = function () {
+  return { status: 200, body: 'Wrong move. Better use .status or .refresh subcommands.' }
 }
 
-// Helper methods
+YAMB.prototype.doYambiStatus = function () {
+  var body = {
+    updateTime: this.lastStructureChangeTime,
+    controllerUpdateTime: this.controller.lastStructureChangeTime,
+    count: 0,
+    topics: {},
+    code: 200
+  }
 
-// YAMB.prototype.processAction = function (index, event) {
-//   var self = this
+  body.topics = this.topics
+  body.count = _.size(body.topics)
+  var result = this.prepareHTTPResponse(body)
+  return result
+}
 
-//   var action = self.config.actions[index]
-//   if (typeof (action) === 'undefined') {
-//     return
-//   }
+YAMB.prototype.doYambiRefresh = function () {
+  var body = {
+    thisUpdateTime: this.lastStructureChangeTime,
+    controllerUpdateTime: this.controller.lastStructureChangeTime,
+    topics: {},
+    code: 200
+  }
 
-//   if (typeof (action.delay) === 'number' &&
-//         action.delay > 0) {
-//     self.timeout = setTimeout(
-//             _.bind(self.performAction, self, index, event),
-//             (action.delay * 1000)
-//         )
-//   } else {
-//     self.performAction(index, event)
-//   }
-// }
+  this.lastStructureChangeTime = 0
+  this.onCheckForNewDevices()
+  body.topics = this.topics
 
-// YAMB.prototype.performAction = function (index, event) {
-//   var self = this
-//   console.log('[YAMB] Running action index ' + index)
-
-//     // Always reset timeout
-//   self.timeout = undefined
-
-//   var action = self.config.actions[index]
-
-//   _.each(action.switches, function (element) {
-//     var deviceObject = self.controller.devices.get(element.device)
-//     if (deviceObject !== null) {
-//       if (element.status === 'toggle') {
-//         var level = deviceObject.get('metrics:level')
-//         level = (level === 'on') ? 'off' : 'on'
-//         deviceObject.performCommand(level)
-//       } else {
-//         deviceObject.performCommand(element.level)
-//       }
-//     }
-//   })
-
-//   _.each(action.multilevels, function (element) {
-//     var deviceObject = self.controller.devices.get(element.device)
-//     var level = parseInt(element.level, 10)
-//     if (deviceObject !== null) {
-//       deviceObject.performCommand('exact', { level: level })
-//     }
-//   })
-
-//   _.each(action.scenes, function (element) {
-//     var deviceObject = self.controller.devices.get(element)
-//     if (deviceObject !== null) {
-//       deviceObject.performCommand('on')
-//     }
-//   })
-
-//   if (typeof (action.code) !== 'undefined') {
-//     self.evalCode(action.code, index, event)
-//   }
-
-//   _.forEach(action.notifications, function (element) {
-//     var deviceObject = self.controller.devices.get(element.device)
-//     if (deviceObject !== null) {
-//       if ((event.message !== undefined)) {
-//         message = event.message
-//       } else {
-//         message = element.message
-//       }
-//       deviceObject.set('metrics:message', message, { silent: true })
-//       deviceObject.performCommand('on')
-//       deviceObject.set('metrics:message', '', { silent: true })
-//     }
-//   })
-
-//   self.processAction(index + 1, event)
-// }
-
-// YAMB.prototype.evalCode = function (code, index, event) {
-//   try {
-//     eval(code)
-//   } catch (e) {
-//     console.error('[YAMB] Error running custom code in index ' + index + ': ' + e)
-//   }
-// }
+  var result = this.prepareHTTPResponse(body)
+  return result
+}

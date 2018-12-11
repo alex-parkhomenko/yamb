@@ -1,4 +1,6 @@
 {
+  "singleton": true,
+  "version": "0.03",
   "author": "Alex Parkhomenko",
   "category": "developers_stuff",
   "defaults": {
@@ -6,12 +8,12 @@
     "title": "YAMB"
   },
   "dependencies": [],
-  "homepage": "https://github.com/maros/Zway-EventWatcher/",
+  "homepage": "https://github.com/alex-parkhomenko/yamb",
   "icon": "icon.png",
   "maturity": "alfa",
   "moduleName": "YAMB",
   "repository": {
-    "source": "https://github.com/maros/Zway-EventWatcher",
+    "source": "https://github.com/alex-parkhomenko/yamb",
     "type": "git"
   },
   "options": {
@@ -19,7 +21,5 @@
   },
   "schema": {
     "properties": {}
-  },
-  "singleton": true,
-  "version": "0.03"
+  }
 }
